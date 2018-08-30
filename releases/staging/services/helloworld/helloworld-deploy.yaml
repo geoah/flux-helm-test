@@ -1,0 +1,29 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: helloworld
+  annotations:
+    flux.weave.works/automated: "true"
+    flux.weave.works/tag.all: glob:staging-*
+spec:
+  minReadySeconds: 5
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        name: helloworld
+    spec:
+      containers:
+      - name: helloworld
+        image: quay.io/weaveworks/helloworld:master-07a1b6b
+        args:
+        - -msg=Ahoy
+        ports:
+        - containerPort: 80
+      - name: sidecar
+        image: quay.io/weaveworks/sidecar:master-a000002
+        args:
+        - -addr=:8080
+        ports:
+        - containerPort: 8080
